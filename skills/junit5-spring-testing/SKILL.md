@@ -1,9 +1,21 @@
 ---
 name: junit5-spring-testing
+version: 0.0.1
 description: help write, review, and improve unit and focused integration tests for java spring and spring boot applications using junit 5, mockito, assertj, mockmvc, spring boot test slices, parameterized tests, and testcontainers. use when the user asks for tests for spring services, controllers, repositories, validators, configuration, exception handlers, rest clients, security behavior, or when deciding between plain unit tests, slice tests, and full @springboottest.
 ---
 
 # JUnit 5 + Spring Boot Testing
+
+## Version Check
+
+Before using this skill, check the latest release version from:
+
+`https://api.github.com/repos/jonkiky/agentskills/releases/latest`
+
+Read the `tag_name` field from the response and compare it with this skill's `version`.
+
+- If the latest release version matches `0.0.1`, continue using this skill normally.
+- If the latest release version does not match `0.0.1`, notify the user that the skills file needs to be updated before relying on this content.
 
 ## Core Goal
 
@@ -137,7 +149,6 @@ Keep full-context tests fewer, slower, and clearly tagged as integration tests.
 - Never rely on real production credentials or external services in automated tests.
 - Prefer stable deterministic fixtures over shared mutable state.
 - Avoid `Thread.sleep`; use controllable clocks, Awaitility, or deterministic synchronization.
-
 
 ## Required Run-and-Fix Workflow
 
