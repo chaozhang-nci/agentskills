@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container Security Review — Design Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'Share Tech Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('data:font/woff2;base64,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') format('woff2');
+}
+</style>
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --border: #1e2535;
+    --border-bright: #2e3f5c;
+    --text: #c9d1e0;
+    --muted: #5a6a82;
+    --accent: #4fc3f7;
+    --critical: #ff4757;
+    --high: #ff9f43;
+    --medium: #ffd32a;
+    --low: #2ed573;
+    --fixed: #2ed573;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --glow-critical: 0 0 20px rgba(255,71,87,0.3);
+    --glow-accent: 0 0 20px rgba(79,195,247,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* Scan line overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────────── */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid var(--border);
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(7,9,15,0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .sidebar-logo .skill-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-logo h1 {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .sidebar-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fixed);
+    box-shadow: 0 0 6px var(--fixed);
+    animation: pulse 2s infinite;
+  }
+
+  .status-text {
+    font-size: 10px;
+    color: var(--fixed);
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--accent);
+    background: rgba(79,195,247,0.06);
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+  }
+
+  .nav-item {
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item .nav-num {
+    color: var(--border-bright);
+    font-size: 10px;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num { color: var(--accent); }
+
+  /* ── MAIN ─────────────────────────────────────────── */
+  .main {
+    padding: 48px 64px;
+    max-width: 900px;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  .page-header {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeSlideIn 0.6s ease both;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .page-header h1 {
+    font-family: var(--display);
+    font-size: 42px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .page-header h1 span {
+    color: var(--critical);
+    text-shadow: var(--glow-critical);
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 1px solid var(--border-bright);
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .meta-pill.approved {
+    border-color: var(--fixed);
+    color: var(--fixed);
+    box-shadow: 0 0 12px rgba(46,213,115,0.1);
+  }
+
+  /* ── SECTIONS ─────────────────────────────────────────── */
+  .section {
+    margin-bottom: 32px;
+    animation: fadeSlideIn 0.5s ease both;
+    overflow: visible;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .section-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    padding-right: 40px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    overflow: visible;
+  }
+
+  .section-num {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-family: var(--mono);
+    min-width: 32px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    color: #fff;
+    overflow: visible;
+  }
+
+  .collapse-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-bright);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .collapse-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  .section-body {
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  .section-body.collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  /* ── CARDS ─────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+
+  .card.accent::before { background: var(--accent); }
+  .card.critical::before { background: var(--critical); }
+  .card.high::before { background: var(--high); }
+  .card.warning::before { background: var(--medium); }
+  .card.success::before { background: var(--fixed); }
+
+  .card p { color: var(--text); margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── IDENTITY TABLE ─────────────────────────────────── */
+  .identity-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .identity-grid .cell {
+    background: var(--surface);
+    padding: 12px 16px;
+  }
+
+  .identity-grid .cell.label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .identity-grid .cell.value {
+    color: var(--text);
+  }
+
+  code {
+    font-family: var(--mono);
+    background: rgba(79,195,247,0.08);
+    border: 1px solid rgba(79,195,247,0.15);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* ── SCANNER TABLE ──────────────────────────────────── */
+  .scanner-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .scanner-row {
+    display: grid;
+    grid-template-columns: 170px 160px 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .scanner-row:hover { border-color: var(--border-bright); }
+
+  .scanner-row.header-row { background: rgba(79,195,247,0.05); }
+
+  .scanner-cell {
+    background: var(--surface);
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .scanner-row.header-row .scanner-cell {
+    background: rgba(79,195,247,0.05);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .scanner-name {
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scanner-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border-bright);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .scanner-indicator.detected {
+    background: var(--fixed);
+    border-color: var(--fixed);
+    box-shadow: 0 0 8px var(--fixed);
+  }
+
+  .scanner-indicator.scanning {
+    background: var(--medium);
+    border-color: var(--medium);
+    animation: pulse 0.8s infinite;
+  }
+
+  .scanner-cmd {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .detect-btn {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ── TRIAGE MATRIX ──────────────────────────────────── */
+  .triage-matrix {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .triage-row {
+    display: grid;
+    grid-template-columns: 130px 140px 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .triage-row.header { background: rgba(79,195,247,0.05); }
+
+  .triage-cell {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .triage-row.header .triage-cell {
+    background: rgba(79,195,247,0.05);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .sev-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sev-badge.critical { background: rgba(255,71,87,0.15); color: var(--critical); border: 1px solid rgba(255,71,87,0.3); }
+  .sev-badge.high { background: rgba(255,159,67,0.15); color: var(--high); border: 1px solid rgba(255,159,67,0.3); }
+  .sev-badge.medium { background: rgba(255,211,42,0.12); color: var(--medium); border: 1px solid rgba(255,211,42,0.25); }
+  .sev-badge.low { background: rgba(46,213,115,0.1); color: var(--low); border: 1px solid rgba(46,213,115,0.2); }
+
+  /* ── SEVERITY FILTER ────────────────────────────────── */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    padding: 5px 14px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+
+  .filter-btn.critical { color: var(--critical); border-color: rgba(255,71,87,0.3); }
+  .filter-btn.high { color: var(--high); border-color: rgba(255,159,67,0.3); }
+  .filter-btn.medium { color: var(--medium); border-color: rgba(255,211,42,0.25); }
+  .filter-btn.low { color: var(--low); border-color: rgba(46,213,115,0.2); }
+
+  .filter-btn.active.critical { background: rgba(255,71,87,0.15); box-shadow: var(--glow-critical); }
+  .filter-btn.active.high { background: rgba(255,159,67,0.15); }
+  .filter-btn.active.medium { background: rgba(255,211,42,0.1); }
+  .filter-btn.active.low { background: rgba(46,213,115,0.1); }
+
+  .filter-btn:not(.active) { opacity: 0.45; }
+
+  /* ── ACTION PLAN DEMO ───────────────────────────────── */
+  .action-plan {
+    background: #050709;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .plan-header {
+    background: var(--surface);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .plan-header-text {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .plan-header-text span { color: var(--accent); }
+
+  .plan-body {
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .plan-section-title {
+    color: var(--critical);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plan-section-title.awareness { color: var(--medium); }
+
+  .finding-item {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .finding-item:hover { border-color: var(--border-bright); }
+
+  .finding-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+  }
+
+  .finding-num {
+    color: var(--muted);
+    font-size: 11px;
+    min-width: 20px;
+  }
+
+  .finding-cve { color: var(--accent); }
+  .finding-pkg { color: var(--text); }
+
+  .finding-detail {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    display: none;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .finding-detail.open { display: block; }
+
+  .finding-detail .detail-line {
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .detail-line .key { color: var(--text); min-width: 100px; }
+  .detail-line .val { color: var(--accent); }
+  .detail-line .rec { color: var(--fixed); }
+
+  .finding-check {
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border-bright);
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: all 0.2s;
+    color: transparent;
+    flex-shrink: 0;
+  }
+
+  .finding-check.checked {
+    background: rgba(46,213,115,0.15);
+    border-color: var(--fixed);
+    color: var(--fixed);
+  }
+
+  .plan-confirm {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── BUTTONS ────────────────────────────────────────── */
+  .btn {
+    padding: 8px 18px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.2s;
+    background: none;
+  }
+
+  .btn-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: rgba(79,195,247,0.1);
+    box-shadow: var(--glow-accent);
+  }
+
+  .btn-danger {
+    border-color: var(--critical);
+    color: var(--critical);
+  }
+
+  .btn-danger:hover {
+    background: rgba(255,71,87,0.1);
+    box-shadow: var(--glow-critical);
+  }
+
+  .btn-ghost {
+    border-color: var(--border-bright);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* ── FIX FLOW ───────────────────────────────────────── */
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), rgba(79,195,247,0.1));
+  }
+
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 12px 0;
+    position: relative;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-bright);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+
+  .step-dot.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--glow-accent);
+  }
+
+  .step-dot.done {
+    border-color: var(--fixed);
+    color: var(--fixed);
+    background: rgba(46,213,115,0.1);
+  }
+
+  .step-content { padding-top: 4px; }
+  .step-title { color: var(--text); margin-bottom: 2px; }
+  .step-desc { color: var(--muted); font-size: 12px; }
+
+  /* ── SAFETY RULES ───────────────────────────────────── */
+  .rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .rule-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 11px 16px;
+    background: rgba(255,71,87,0.04);
+    border: 1px solid rgba(255,71,87,0.18);
+    border-left: 3px solid var(--critical);
+    border-radius: 3px;
+    font-size: 12px;
+    transition: background 0.2s;
+  }
+
+  .rule-item:hover { background: rgba(255,71,87,0.08); }
+
+  .rule-icon {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--critical);
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+    font-family: var(--mono);
+  }
+
+  .rule-text { color: var(--text); }
+
+  /* ── INSTALL BLOCK ──────────────────────────────────── */
+  .install-block {
+    background: #050709;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .install-bar {
+    background: var(--surface);
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .install-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  .install-dot:nth-child(1) { background: #ff5f57; }
+  .install-dot:nth-child(2) { background: #ffbd2e; }
+  .install-dot:nth-child(3) { background: #28c940; }
+
+  .install-title {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .install-content {
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .install-content .prompt { color: var(--fixed); }
+  .install-content .cmd { color: var(--text); }
+  .install-content .comment { color: var(--muted); }
+
+  /* ── COMPLETION DEMO ────────────────────────────────── */
+  .completion-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 20px 16px 16px;
+    text-align: center;
+    transition: border-top-color 0.4s;
+  }
+
+  .stat-card.fixed { border-top-color: var(--fixed); }
+  .stat-card.remaining { border-top-color: var(--high); }
+  .stat-card.nofix { border-top-color: var(--muted); }
+  .stat-card.new { border-top-color: var(--accent); }
+
+  .stat-num {
+    font-family: var(--display);
+    font-size: 44px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .stat-card.fixed .stat-num { color: var(--fixed); }
+  .stat-card.remaining .stat-num { color: var(--high); }
+  .stat-card.nofix .stat-num { color: var(--muted); }
+  .stat-card.new .stat-num { color: var(--accent); }
+
+  /* ── SCOPE TAGS ─────────────────────────────────────── */
+  .scope-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .scope-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 20px;
+  }
+
+  .scope-block h4 {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .scope-block.in h4 { color: var(--fixed); }
+  .scope-block.out h4 { color: var(--muted); }
+
+  .scope-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .scope-item .scope-icon { flex-shrink: 0; margin-top: 1px; }
+  .scope-block.in .scope-icon { color: var(--fixed); }
+  .scope-block.out .scope-icon { color: var(--muted); }
+
+  /* ── TOOLTIPS ────────────────────────────────────────── */
+  [data-tip] {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dashed var(--border-bright);
+  }
+
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 100;
+  }
+
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* ── MISC ─────────────────────────────────────────────── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border: 1px solid var(--border-bright);
+    border-radius: 2px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .tag.standalone { border-color: rgba(79,195,247,0.3); color: var(--accent); }
+
+  ul.plain {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  ul.plain li {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  ul.plain li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── TOAST ───────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--fixed);
+    color: var(--fixed);
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(46,213,115,0.15);
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── SCROLL PROGRESS ────────────────────────────────── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--critical));
+    z-index: 9999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(79,195,247,0.5);
+  }
+
+  /* ── COPY BUTTON ────────────────────────────────────── */
+  .install-bar-right {
+    margin-left: auto;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border-bright);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--fixed); border-color: var(--fixed); }
+
+  /* ── TERMINAL CURSOR ────────────────────────────────── */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1.1s step-end infinite;
+    opacity: 0.8;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0; }
+  }
+
+  /* ── BACK TO TOP ────────────────────────────────────── */
+  .back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 36px;
+    height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    color: var(--muted);
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s;
+  }
+
+  .back-to-top.visible { opacity: 1; transform: translateY(0); }
+  .back-to-top:hover { color: var(--accent); border-color: var(--accent); box-shadow: var(--glow-accent); }
+
+  /* ── DETECT STATUS IMPROVED ─────────────────────────── */
+  .detect-status-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fixed);
+    background: rgba(46,213,115,0.08);
+    border: 1px solid rgba(46,213,115,0.2);
+    padding: 4px 10px;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .detect-status-box.visible { opacity: 1; }
+
+  /* ── SECTION HEADER HOVER ───────────────────────────── */
+  .section-header:hover .section-title { color: var(--accent); }
+  .section-title { transition: color 0.2s; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 24px; }
+    .scope-grid { grid-template-columns: 1fr; }
+    .completion-stats { grid-template-columns: repeat(2, 1fr); }
+    .triage-row { grid-template-columns: 1fr; }
+    .scanner-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scroll-progress"></div>
+<button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="skill-tag">skill / security</span>
+      <h1>Container Security Review</h1>
+      <div class="sidebar-status">
+        <div class="status-dot"></div>
+        <span class="status-text">APPROVED</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <div style="padding:0 12px 12px; font-size:10px; color:var(--muted); letter-spacing:0.1em; display:flex; justify-content:space-between; align-items:center;">
+        <span>SECTIONS</span><span style="color:var(--border-bright);">9 total</span>
+      </div>
+      <a class="nav-item active" href="#problem"><span class="nav-num">01</span> Problem</a>
+      <a class="nav-item" href="#scope"><span class="nav-num">02</span> Scope</a>
+      <a class="nav-item" href="#identity"><span class="nav-num">03</span> Skill Identity</a>
+      <a class="nav-item" href="#scanners"><span class="nav-num">04</span> Scanner Detection</a>
+      <a class="nav-item" href="#triage"><span class="nav-num">05</span> Triage Logic</a>
+      <a class="nav-item" href="#action-plan"><span class="nav-num">06</span> Action Plan</a>
+      <a class="nav-item" href="#fix"><span class="nav-num">07</span> Fix Behaviour</a>
+      <a class="nav-item" href="#completion"><span class="nav-num">08</span> Completion</a>
+      <a class="nav-item" href="#safety"><span class="nav-num">09</span> Safety Rules</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+      <div class="header-eyebrow">Design Specification</div>
+      <h1>Container<br><span>Security</span> Review</h1>
+      <div class="header-meta">
+        <span class="meta-pill approved">● APPROVED</span>
+        <span class="meta-pill">2026-05-20</span>
+        <span class="meta-pill">v1.0</span>
+        <span class="tag standalone">standalone</span>
+      </div>
+    </header>
+
+    <!-- 01 PROBLEM -->
+    <section class="section" id="problem">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Problem</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="card high">
+          <p>CVE findings in container images are currently caught <strong>server-side</strong> — in CI/CD builds or Twistlock/Prisma scans. By that point the feedback loop is slow and expensive to fix.</p>
+          <p>This skill shifts that check <strong>left</strong>: run locally before push, triage immediately, confirm before acting.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 SCOPE -->
+    <section class="section" id="scope">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Scope</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="scope-grid">
+          <div class="scope-block in">
+            <h4>In Scope</h4>
+            <div class="scope-item"><span class="scope-icon">✓</span> Docker image CVE scanning</div>
+            <div class="scope-item"><span class="scope-icon">✓</span> Auto-detect installed scanners</div>
+            <div class="scope-item"><span class="scope-icon">✓</span> Multi-scanner result merging</div>
+            <div class="scope-item"><span class="scope-icon">✓</span> Severity-based triage</div>
+            <div class="scope-item"><span class="scope-icon">✓</span> Prioritised action plan</div>
+            <div class="scope-item"><span class="scope-icon">✓</span> Confirm-before-fix workflow</div>
+          </div>
+          <div class="scope-block out">
+            <h4>Out of Scope</h4>
+            <div class="scope-item"><span class="scope-icon">✗</span> Filesystem / IaC scanning</div>
+            <div class="scope-item"><span class="scope-icon">✗</span> Source code SAST</div>
+            <div class="scope-item"><span class="scope-icon">✗</span> Automated deployment</div>
+            <div class="scope-item"><span class="scope-icon">✗</span> CI/CD pipeline integration</div>
+            <div class="scope-item"><span class="scope-icon">✗</span> Kubernetes manifest scanning</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 IDENTITY -->
+    <section class="section" id="identity">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Skill Identity</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="identity-grid">
+          <div class="cell label">Name</div>
+          <div class="cell value"><code>container-security-review</code></div>
+          <div class="cell label">Portability</div>
+          <div class="cell value">Standalone — no dependency on other installed skills</div>
+          <div class="cell label">Trigger</div>
+          <div class="cell value">User asks to review/scan/check CVEs in a Docker image, or mentions Trivy / Snyk / Twistlock / Prisma against an image</div>
+          <div class="cell label">Installation</div>
+          <div class="cell value">
+            <div class="install-block" style="margin-top:4px">
+              <div class="install-bar">
+                <div class="install-dot"></div>
+                <div class="install-dot"></div>
+                <div class="install-dot"></div>
+                <span class="install-title">terminal</span>
+                <div class="install-bar-right">
+                  <button class="copy-btn" id="copy-install" onclick="copyInstall()">copy</button>
+                </div>
+              </div>
+              <div class="install-content">
+                <span class="prompt">$ </span><span class="cmd" id="install-cmd">npx skills add chaozhang-nci/agentskills@container-security-review</span><span class="cursor"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <p style="font-size:11px; color:var(--muted); margin-bottom:10px; letter-spacing:0.1em; text-transform:uppercase">Inputs</p>
+        <div style="display:grid; gap:6px;">
+          <div style="display:grid; grid-template-columns:140px 90px 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+            <div style="background:var(--surface); padding:10px 14px; color:#fff; font-size:12px;">Image reference</div>
+            <div style="background:var(--surface); padding:10px 14px;"><span style="color:var(--critical); font-size:10px; font-weight:bold; letter-spacing:0.08em;">REQUIRED</span></div>
+            <div style="background:var(--surface); padding:10px 14px; color:var(--muted); font-size:12px;">Local tag or registry path, e.g. <code>myapp:latest</code></div>
+          </div>
+          <div style="display:grid; grid-template-columns:140px 90px 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+            <div style="background:var(--surface); padding:10px 14px; color:#fff; font-size:12px;">Scanner</div>
+            <div style="background:var(--surface); padding:10px 14px;"><span style="color:var(--muted); font-size:10px; font-weight:bold; letter-spacing:0.08em;">OPTIONAL</span></div>
+            <div style="background:var(--surface); padding:10px 14px; color:var(--muted); font-size:12px;">Specify one explicitly, or omit for auto-detect</div>
+          </div>
+          <div style="display:grid; grid-template-columns:140px 90px 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+            <div style="background:var(--surface); padding:10px 14px; color:#fff; font-size:12px;">Prisma URL</div>
+            <div style="background:var(--surface); padding:10px 14px;"><span style="color:var(--medium); font-size:10px; font-weight:bold; letter-spacing:0.08em;">CONDITIONAL</span></div>
+            <div style="background:var(--surface); padding:10px 14px; color:var(--muted); font-size:12px;">Read from <code>PRISMA_URL</code> env var when twistcli is used</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 SCANNERS -->
+    <section class="section" id="scanners">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Scanner Detection</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <p style="font-size:12px; color:var(--muted); margin-bottom:14px">Probes for installed scanners in order. Runs all found unless one is specified. Click "Simulate Detection" to see how auto-detect works.</p>
+
+        <div class="scanner-grid" id="scanner-grid">
+          <div class="scanner-row header-row">
+            <div class="scanner-cell">Scanner</div>
+            <div class="scanner-cell">Detection</div>
+            <div class="scanner-cell">Scan Command</div>
+          </div>
+          <div class="scanner-row" data-scanner="trivy">
+            <div class="scanner-cell scanner-name"><div class="scanner-indicator" id="ind-trivy"></div>Trivy</div>
+            <div class="scanner-cell scanner-cmd">trivy version</div>
+            <div class="scanner-cell scanner-cmd">trivy image --format json &lt;image&gt;</div>
+          </div>
+          <div class="scanner-row" data-scanner="snyk">
+            <div class="scanner-cell scanner-name"><div class="scanner-indicator" id="ind-snyk"></div>Snyk</div>
+            <div class="scanner-cell scanner-cmd">snyk version</div>
+            <div class="scanner-cell scanner-cmd">snyk container test &lt;image&gt; --json</div>
+          </div>
+          <div class="scanner-row" data-scanner="grype">
+            <div class="scanner-cell scanner-name"><div class="scanner-indicator" id="ind-grype"></div>Grype</div>
+            <div class="scanner-cell scanner-cmd">grype version</div>
+            <div class="scanner-cell scanner-cmd">grype &lt;image&gt; -o json</div>
+          </div>
+          <div class="scanner-row" data-scanner="scout">
+            <div class="scanner-cell scanner-name"><div class="scanner-indicator" id="ind-scout"></div>Docker Scout</div>
+            <div class="scanner-cell scanner-cmd">docker scout version</div>
+            <div class="scanner-cell scanner-cmd">docker scout cves &lt;image&gt; --format json</div>
+          </div>
+          <div class="scanner-row" data-scanner="twistlock">
+            <div class="scanner-cell scanner-name"><div class="scanner-indicator" id="ind-twistlock"></div>Twistlock / Prisma</div>
+            <div class="scanner-cell scanner-cmd">twistcli version</div>
+            <div class="scanner-cell scanner-cmd">twistcli images scan --address $PRISMA_URL &lt;image&gt;</div>
+          </div>
+        </div>
+
+        <div class="detect-btn">
+          <button class="btn btn-primary" onclick="simulateDetection()">⚡ Simulate Detection</button>
+          <button class="btn btn-ghost" onclick="resetDetection()">Reset</button>
+          <div class="detect-status-box" id="detect-status-box">
+            <span>●</span><span id="detect-status"></span>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="card accent">
+          <p><strong>Multi-scanner merge:</strong> deduplicate findings by CVE ID. If the same CVE appears in multiple scanner outputs, use the highest severity reported and note which scanners flagged it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 TRIAGE -->
+    <section class="section" id="triage">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Triage Logic</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="filter-bar">
+          <span class="filter-label">Filter:</span>
+          <button class="filter-btn critical active" onclick="toggleFilter(this, 'critical')">Critical</button>
+          <button class="filter-btn high active" onclick="toggleFilter(this, 'high')">High</button>
+          <button class="filter-btn medium active" onclick="toggleFilter(this, 'medium')">Medium</button>
+          <button class="filter-btn low active" onclick="toggleFilter(this, 'low')">Low</button>
+        </div>
+
+        <div class="triage-matrix" id="triage-matrix">
+          <div class="triage-row header">
+            <div class="triage-cell">Severity</div>
+            <div class="triage-cell">Category</div>
+            <div class="triage-cell">Action</div>
+          </div>
+          <div class="triage-row" data-sev="critical">
+            <div class="triage-cell"><span class="sev-badge critical">Critical</span></div>
+            <div class="triage-cell" style="color:var(--text)">OS / base-image</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Case-by-case — show CVE + affected pkg + candidate base image tags. Ask which (if any) to apply.</div>
+          </div>
+          <div class="triage-row" data-sev="critical">
+            <div class="triage-cell"><span class="sev-badge critical">Critical</span></div>
+            <div class="triage-cell" style="color:var(--text)">App dependency</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Show CVE + package + recommended upgrade version. Confirm before applying.</div>
+          </div>
+          <div class="triage-row" data-sev="high">
+            <div class="triage-cell"><span class="sev-badge high">High</span></div>
+            <div class="triage-cell" style="color:var(--text)">OS / base-image</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Case-by-case — show CVE + affected pkg + candidate base image tags. Ask which (if any) to apply.</div>
+          </div>
+          <div class="triage-row" data-sev="high">
+            <div class="triage-cell"><span class="sev-badge high">High</span></div>
+            <div class="triage-cell" style="color:var(--text)">App dependency</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Show CVE + package + recommended upgrade version. Confirm before applying.</div>
+          </div>
+          <div class="triage-row" data-sev="medium">
+            <div class="triage-cell"><span class="sev-badge medium">Medium</span></div>
+            <div class="triage-cell" style="color:var(--text)">Any</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Summarised in awareness table. No action proposed unless user asks.</div>
+          </div>
+          <div class="triage-row" data-sev="low">
+            <div class="triage-cell"><span class="sev-badge low">Low</span></div>
+            <div class="triage-cell" style="color:var(--text)">Any</div>
+            <div class="triage-cell" style="color:var(--text); font-size:12px">Summarised in awareness table. No action proposed unless user asks.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 ACTION PLAN -->
+    <section class="section" id="action-plan">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Action Plan Output</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px">Interactive demo — expand findings and check items to simulate user selection before confirming.</p>
+
+        <div class="action-plan">
+          <div class="plan-header">
+            <span class="plan-header-text">Container Security Review — <span>myapp:latest</span></span>
+            <span class="plan-header-text">Scanners: <span>Trivy, Snyk</span></span>
+          </div>
+          <div class="plan-body">
+
+            <div class="plan-section-title">⚠ CRITICAL / HIGH — Action Required (2 findings)</div>
+
+            <div class="finding-item">
+              <div class="finding-header" onclick="toggleFinding(this)">
+                <span class="finding-num">[1]</span>
+                <span class="finding-cve">CVE-2024-0853</span>
+                <span class="sev-badge critical" style="margin-left:4px">CRITICAL</span>
+                <span class="tag" style="margin-left:6px">OS</span>
+                <span class="finding-pkg" style="margin-left:8px; font-size:12px">openssl 3.0.2</span>
+                <div class="finding-check" id="check-1" onclick="toggleCheck(event, 'check-1')"></div>
+              </div>
+              <div class="finding-detail">
+                <div class="detail-line"><span class="key">Base image:</span><span>ubuntu:22.04</span></div>
+                <div class="detail-line"><span class="key">Fixed in:</span><span class="val">openssl 3.0.7</span></div>
+                <div class="detail-line"><span class="key">Candidates:</span><span>ubuntu:22.04.3, ubuntu:24.04</span></div>
+                <div class="detail-line"><span class="key">Recommend:</span><span class="rec">→ update FROM to ubuntu:22.04.3 (fewer CVEs, same LTS line)</span></div>
+              </div>
+            </div>
+
+            <div class="finding-item">
+              <div class="finding-header" onclick="toggleFinding(this)">
+                <span class="finding-num">[2]</span>
+                <span class="finding-cve">CVE-2023-26159</span>
+                <span class="sev-badge high" style="margin-left:4px">HIGH</span>
+                <span class="tag" style="margin-left:6px">App</span>
+                <span class="finding-pkg" style="margin-left:8px; font-size:12px">follow-redirects 1.15.1</span>
+                <div class="finding-check" id="check-2" onclick="toggleCheck(event, 'check-2')"></div>
+              </div>
+              <div class="finding-detail">
+                <div class="detail-line"><span class="key">File:</span><span>package.json</span></div>
+                <div class="detail-line"><span class="key">Fixed in:</span><span class="val">1.15.4</span></div>
+                <div class="detail-line"><span class="key">Recommend:</span><span class="rec">→ upgrade follow-redirects to 1.15.4</span></div>
+              </div>
+            </div>
+
+            <hr class="divider">
+            <div class="plan-section-title awareness">ℹ MEDIUM / LOW — For Awareness (3 findings)</div>
+            <div style="font-size:12px; color:var(--muted); padding:4px 0">
+              CVE-2023-44487 · MEDIUM · libnghttp2 · fix available<br>
+              CVE-2023-29383 · LOW · shadow-utils · no fix<br>
+              CVE-2023-36617 · LOW · rubygems · fix available
+            </div>
+
+            <div class="plan-confirm">
+              <button class="btn btn-primary" onclick="handleConfirm()">Apply Selected</button>
+              <button class="btn btn-ghost" onclick="handleConfirm('all')">Apply All HIGH+</button>
+              <button class="btn btn-danger" onclick="showToast('No changes made.')">Skip</button>
+              <span id="confirm-hint" style="font-size:11px; color:var(--muted); margin-left:4px"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 FIX BEHAVIOUR -->
+    <section class="section" id="fix">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Fix Behaviour</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.1em">OS / Base-image fixes</p>
+        <div class="flow-steps" id="os-flow">
+          <div class="flow-step">
+            <div class="step-dot active">1</div>
+            <div class="step-content">
+              <div class="step-title">Update Dockerfile</div>
+              <div class="step-desc">Replace <code>FROM</code> line with confirmed candidate base image tag</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-dot">2</div>
+            <div class="step-content">
+              <div class="step-title">Rebuild Image</div>
+              <div class="step-desc"><code>docker build -t &lt;image&gt; .</code></div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-dot">3</div>
+            <div class="step-content">
+              <div class="step-title">Rescan</div>
+              <div class="step-desc">Run same scanner(s) to confirm the CVE is absent</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-dot">4</div>
+            <div class="step-content">
+              <div class="step-title">Report Result</div>
+              <div class="step-desc">Fixed / still present / newly introduced</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px; margin-bottom:4px">
+          <button class="btn btn-primary" onclick="animateFlow('os-flow')" style="font-size:11px; padding:6px 14px">▶ Animate Steps</button>
+        </div>
+
+        <hr class="divider">
+
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.1em">App dependency fixes</p>
+        <div class="flow-steps" id="app-flow">
+          <div class="flow-step">
+            <div class="step-dot active">1</div>
+            <div class="step-content">
+              <div class="step-title">Apply Package Upgrade</div>
+              <div class="step-desc">Run appropriate package manager command for the ecosystem</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-dot">2</div>
+            <div class="step-content">
+              <div class="step-title">Rebuild if Needed</div>
+              <div class="step-desc">Rebuild image to pick up updated dependencies</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-dot">3</div>
+            <div class="step-content">
+              <div class="step-title">Rescan & Report</div>
+              <div class="step-desc">Confirm CVE is gone; report result</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px; margin-bottom:4px">
+          <button class="btn btn-primary" onclick="animateFlow('app-flow')" style="font-size:11px; padding:6px 14px">▶ Animate Steps</button>
+        </div>
+
+        <hr class="divider">
+
+        <p style="font-size:12px; color:var(--critical); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.1em">Hard Stops — do not attempt fix if:</p>
+        <ul class="plain">
+          <li>No Dockerfile is accessible for OS fixes</li>
+          <li>No fixed version exists for a CVE</li>
+          <li>Scanner rescan cannot be run after the fix</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 08 COMPLETION -->
+    <section class="section" id="completion">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Completion Output</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="completion-stats">
+          <div class="stat-card fixed">
+            <div class="stat-num" id="stat-fixed">—</div>
+            <div class="stat-label">Fixed</div>
+          </div>
+          <div class="stat-card remaining">
+            <div class="stat-num" id="stat-remaining">—</div>
+            <div class="stat-label">Remaining</div>
+          </div>
+          <div class="stat-card nofix">
+            <div class="stat-num" id="stat-nofix">—</div>
+            <div class="stat-label">No Fix Available</div>
+          </div>
+          <div class="stat-card new">
+            <div class="stat-num" id="stat-new">—</div>
+            <div class="stat-label">Newly Introduced</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="animateStats()" style="margin-bottom:16px">▶ Simulate Result</button>
+
+        <div class="card success">
+          <p style="font-size:12px; color:var(--muted); margin-bottom:8px">Next steps are listed for any remaining HIGH+ CVEs that could not be resolved.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 SAFETY -->
+    <section class="section" id="safety">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">09</span>
+        <h2 class="section-title">Safety Rules</h2>
+        <button class="collapse-btn">−</button>
+      </div>
+      <div class="section-body">
+        <div class="rules-list">
+          <div class="rule-item">
+            <div class="rule-icon">NO</div>
+            <div class="rule-text">Never apply any fix before explicit user confirmation</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">NO</div>
+            <div class="rule-text">Never suppress or ignore a finding without noting it explicitly</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">NO</div>
+            <div class="rule-text">Never use <code>latest</code> as a candidate base image tag</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">NO</div>
+            <div class="rule-text">Never claim a CVE is fixed without rescan evidence</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">NO</div>
+            <div class="rule-text">If <code>PRISMA_URL</code> is not set and Twistlock is the chosen scanner, prompt for it — do not guess or skip</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Section collapse ────────────────────────────────────
+  function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const btn = header.querySelector('.collapse-btn');
+    const collapsed = body.classList.toggle('collapsed');
+    btn.textContent = collapsed ? '+' : '−';
+  }
+
+  // ── Active nav on scroll ─────────────────────────────────
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('.section');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(n => {
+          n.classList.toggle('active', n.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ── Scanner simulation ───────────────────────────────────
+  const scanners = ['trivy', 'snyk', 'grype', 'scout', 'twistlock'];
+  const detected = ['trivy', 'snyk']; // simulated: only these two are installed
+
+  function simulateDetection() {
+    resetDetection();
+    showDetectStatus('Probing...');
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= scanners.length) {
+        clearInterval(interval);
+        showDetectStatus(`Found: ${detected.join(', ')}`);
+        detected.forEach(s => {
+          const ind = document.getElementById(`ind-${s}`);
+          if (ind) { ind.classList.remove('scanning'); ind.classList.add('detected'); }
+        });
+        return;
+      }
+      const ind = document.getElementById(`ind-${scanners[i]}`);
+      if (ind) ind.classList.add('scanning');
+      setTimeout(() => {
+        if (!detected.includes(scanners[i]) && ind) {
+          ind.classList.remove('scanning');
+        }
+      }, 400);
+      i++;
+    }, 500);
+  }
+
+  function resetDetection() {
+    scanners.forEach(s => {
+      const ind = document.getElementById(`ind-${s}`);
+      if (ind) { ind.classList.remove('detected', 'scanning'); }
+    });
+    showDetectStatus('');
+  }
+
+  // ── Severity filter ──────────────────────────────────────
+  function toggleFilter(btn, sev) {
+    btn.classList.toggle('active');
+    const show = btn.classList.contains('active');
+    document.querySelectorAll(`#triage-matrix .triage-row[data-sev="${sev}"]`)
+      .forEach(row => row.style.display = show ? '' : 'none');
+  }
+
+  // ── Finding expand ───────────────────────────────────────
+  function toggleFinding(header) {
+    const detail = header.nextElementSibling;
+    if (detail) detail.classList.toggle('open');
+  }
+
+  // ── Finding check ────────────────────────────────────────
+  function toggleCheck(e, id) {
+    e.stopPropagation();
+    const el = document.getElementById(id);
+    el.classList.toggle('checked');
+    el.textContent = el.classList.contains('checked') ? '✓' : '';
+    updateConfirmHint();
+  }
+
+  function updateConfirmHint() {
+    const checked = document.querySelectorAll('.finding-check.checked').length;
+    const hint = document.getElementById('confirm-hint');
+    hint.textContent = checked > 0 ? `${checked} item(s) selected` : '';
+  }
+
+  // ── Confirm ──────────────────────────────────────────────
+  function handleConfirm(mode) {
+    if (mode === 'all') {
+      document.querySelectorAll('.finding-check').forEach(c => {
+        c.classList.add('checked');
+        c.textContent = '✓';
+      });
+    }
+    const checked = document.querySelectorAll('.finding-check.checked').length;
+    if (checked === 0) { showToast('No items selected.'); return; }
+    showToast(`Applying ${checked} fix(es)... confirm in terminal.`);
+  }
+
+  // ── Flow animation ───────────────────────────────────────
+  function animateFlow(flowId) {
+    const flow = document.getElementById(flowId);
+    const dots = flow.querySelectorAll('.step-dot');
+    dots.forEach((d, i) => { d.className = 'step-dot'; });
+    dots[0].classList.add('active');
+    let i = 1;
+    const interval = setInterval(() => {
+      if (i >= dots.length) { clearInterval(interval); return; }
+      dots[i - 1].classList.remove('active');
+      dots[i - 1].classList.add('done');
+      dots[i - 1].textContent = '✓';
+      dots[i].classList.add('active');
+      i++;
+    }, 900);
+  }
+
+  // ── Stats animation ──────────────────────────────────────
+  function animateStats() {
+    const targets = { 'stat-fixed': 2, 'stat-remaining': 1, 'stat-nofix': 2, 'stat-new': 0 };
+    Object.entries(targets).forEach(([id, target]) => {
+      const el = document.getElementById(id);
+      el.textContent = '0';
+      let current = 0;
+      if (target === 0) return;
+      const interval = setInterval(() => {
+        current = Math.min(current + 1, target);
+        el.textContent = current;
+        if (current >= target) clearInterval(interval);
+      }, 120);
+    });
+  }
+
+  // ── Toast ─────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Scroll progress bar ───────────────────────────────────
+  const progressBar = document.getElementById('scroll-progress');
+  const backBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+    backBtn.classList.toggle('visible', scrollTop > 300);
+  });
+
+  // ── Copy install command ──────────────────────────────────
+  function copyInstall() {
+    const cmd = document.getElementById('install-cmd').textContent;
+    navigator.clipboard.writeText(cmd).then(() => {
+      const btn = document.getElementById('copy-install');
+      btn.textContent = 'copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── Detect status box ─────────────────────────────────────
+  function showDetectStatus(msg) {
+    const box = document.getElementById('detect-status-box');
+    document.getElementById('detect-status').textContent = msg;
+    box.classList.toggle('visible', !!msg);
+  }
+</script>
+</body>
+</html>
