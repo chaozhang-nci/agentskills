@@ -12,6 +12,7 @@ tags:
 - vulnerability-scanning
 version: '1.0'
 author: mahipal
+source: https://skills.rest/skill/scanning-docker-images-with-trivy
 license: Apache-2.0
 nist_csf:
 - PR.PS-01

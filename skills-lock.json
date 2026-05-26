@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "skills": {
+    "git-commit": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "license": "MIT",
+      "computedHash": "eaa650fe3ccadc432fd2336dbbbd5eddc73f26bc684de777d8ae974a7c81844f"
+    },
+    "git-commit-push": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "license": "MIT",
+      "computedHash": "60058e93033915b62671502873734c754737786cb430b707a60de7e3d8b9b5e4"
+    },
+    "snyk-fix": {
+      "source": "https://skills.rest/skill/snyk-fix",
+      "sourceType": "skills-rest",
+      "author": "Snyk",
+      "license": "Apache-2.0",
+      "registryVersion": "1.0.0",
+      "installedVersion": "1.1.0",
+      "computedHash": "81fe909ed296840b4867d144c6b4d9aeb1bc8341f1db2ba8388f5e4c82396ce4"
+    },
+    "scanning-docker-images-with-trivy": {
+      "source": "https://skills.rest/skill/scanning-docker-images-with-trivy",
+      "sourceType": "skills-rest",
+      "author": "mahipal",
+      "license": "Apache-2.0",
+      "installedVersion": "1.0",
+      "computedHash": "1cdf84f345670cbd00499f661daeff5e25a066acebec963d5953d49bb726cee2"
+    },
+    "brainstorming": {
+      "source": "github/obra/superpowers",
+      "sourceType": "github",
+      "author": "Jesse Vincent (obra)",
+      "license": "MIT",
+      "computedHash": "bba47904a7f6bbee3bf8a107ebbe84e65d392be683bbb898ded736b29e415f90"
+    },
+    "email-generator": {
+      "source": "https://skills.rest/skill/email-generator",
+      "sourceType": "skills-rest",
+      "author": "pr3t3l",
+      "note": "local copy contains ESI-specific customizations — may have diverged from upstream",
+      "computedHash": "2e9a9b970aea4c81fe5aeaa5521c1f4b0ee29ac485c3fb2f9695c45e25f790b0"
+    },
+    "superpowers-executing-plans": {
+      "source": "github/obra/superpowers",
+      "sourceType": "github",
+      "author": "Jesse Vincent (obra)",
+      "license": "MIT",
+      "computedHash": "a711f83fb762e2ea0fa151f598893da9911a408895c91cc7a7e0770dd59a27b3"
+    },
+    "superpowers-writing-plans": {
+      "source": "github/obra/superpowers",
+      "sourceType": "github",
+      "author": "Jesse Vincent (obra)",
+      "license": "MIT",
+      "computedHash": "90056bad3d5f196fa7c9fec0ffe592e6d9c86bc983e406642a51d1a4198b7024"
+    },
+    "technical-interview-question-generator": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "8cee6915d4afd91126b9357e21fc2c5da2afbff830d5634d49e411f1f9d2d9e5"
+    },
+    "junit5-spring-testing": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "744bd9d3a61a7ac11cf9cb52f8a15e9e9ab5425504b4f83c354cecc6ea4131c0"
+    },
+    "os-vulnerability-fix": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "note": "added in same commit as scanning-docker-images-with-trivy — likely also from mahipal but not confirmed on skills.rest",
+      "computedHash": "74539784ca3ce3324bca9ead322d48900a7f91c897e5a6a89edc0e86df825114"
+    },
+    "bio-ai-product-manager": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "2e03f846112cdb7439cac1027063366bc3a0d9343819250d2fefbc640953c05b"
+    },
+    "code-reviewer": {
+      "source": "https://skills.rest/skill/code-reviewer",
+      "sourceType": "skills-rest",
+      "author": "artimath",
+      "computedHash": "d2bd763e7cfa424845c54639d4a97cdb0aa03b5eedeabb1d171a16086584cec9"
+    },
+    "codebase-doc-writer": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "b9fc72976e2813e9fd2e6d73e92ddcec1183befe37e674879c6817c37a48f8a3"
+    },
+    "implementation-executor": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "38b83990797eb08a359d1830e899ae67b3641266529648a82760ae3b505e1fbf"
+    },
+    "requirements-to-plan": {
+      "source": "unknown",
+      "sourceType": "unknown",
+      "computedHash": "a7d0b25654b9e86ab5e92d7c960c4ac420e55d866a59c0a154866962de564999"
+    }
+  }
+}

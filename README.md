@@ -25,12 +25,12 @@ npx skills add <owner/repo@skill>
 
 For this repository, prefer skills from:
 
-- `https://github.com/jonkiky/agentskills`
+- `https://github.com/chaozhang-nci/agentskills`
 
 Example:
 
 ```bash
-npx skills add jonkiky/agentskills@code-reviewer
+npx skills add chaozhang-nci/agentskills@code-reviewer
 ```
 
 Non-interactive install (useful for automation):
@@ -42,8 +42,8 @@ npx skills add <owner/repo@skill> -y
 More examples using this repo:
 
 ```bash
-npx skills add jonkiky/agentskills@git-commit
-npx skills add jonkiky/agentskills@implementation-executor
+npx skills add chaozhang-nci/agentskills@git-commit
+npx skills add chaozhang-nci/agentskills@implementation-executor
 ```
 
 After adding a skill, verify the repo changed:

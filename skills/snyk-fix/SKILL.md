@@ -17,7 +17,9 @@ compatibility: |
   Supports SAST for 20+ languages and SCA for all major package managers.
 metadata:
   author: Snyk
-  version: 1.1.0
+  source: https://skills.rest/skill/snyk-fix
+  registry-version: 1.0.0
+  installed-version: 1.1.0
 ---
 
 # Snyk Fix (All-in-One)

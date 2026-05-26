@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "description": "Known agent skill registries and sources. Used by extract-skill-provenance.js to resolve missing skill metadata. Each registry entry describes how to search it, what data it returns, and how trustworthy its results are.",
+  "registries": [
+    {
+      "id": "skyll",
+      "name": "Skyll",
+      "url": "https://www.skyll.app",
+      "description": "REST API and MCP server that aggregates skills from multiple sources (skills.sh, curated registry, and more) in real time. Supports keyword search and returns full SKILL.md content with a relevance score (0–100). The best single API to try first because it fans out across sources automatically.",
+      "trustLevel": "aggregator",
+      "license": "mixed",
+      "searchStrategy": {
+        "type": "rest-api",
+        "searchUrl": "https://api.skyll.app/skills/search?q={skillName}",
+        "directUrl": "https://api.skyll.app/skills/{skillName}",
+        "responseFormat": "json",
+        "resultPath": "skills",
+        "nameField": "name",
+        "sourceField": "source",
+        "authorField": "author",
+        "licenseField": "license",
+        "notes": "No API key required. Rate-limited to reasonable use. Results ranked by relevance + popularity."
+      }
+    },
+    {
+      "id": "tessl",
+      "name": "Tessl Registry",
+      "url": "https://tessl.io/registry",
+      "description": "Curated skill registry with Snyk security scanning on every skill. Each skill has a quality score, security score, and impact score alongside standard metadata. Skills are organized by GitHub owner/repo/skill-name. Partnered with Snyk for supply-chain security — the most trustworthy third-party registry.",
+      "trustLevel": "curated-verified",
+      "license": "mixed",
+      "searchStrategy": {
+        "type": "structured-url",
+        "directUrl": "https://tessl.io/registry/skills/github/{owner}/{repo}/{skillName}",
+        "searchUrl": "https://tessl.io/registry/skills?q={skillName}",
+        "responseFormat": "html",
+        "notes": "Direct URL works well when you know the owner/repo. Skill metadata is embedded in the page. No API key needed."
+      }
+    },
+    {
+      "id": "skillsmp",
+      "name": "SkillsMP",
+      "url": "https://skillsmp.com",
+      "description": "Searchable marketplace of 13,000+ Claude Code skills indexed from GitHub. Supports keyword search and AI semantic search via REST API. Free tier allows 50 requests/day without an API key (keyword search only). Authenticated users get 500/day plus AI search.",
+      "trustLevel": "community-indexed",
+      "license": "mixed",
+      "searchStrategy": {
+        "type": "rest-api",
+        "searchUrl": "https://skillsmp.com/api/v1/skills/search?q={skillName}",
+        "responseFormat": "json",
+        "resultPath": "data",
+        "nameField": "name",
+        "sourceField": "repository",
+        "authorField": "author",
+        "licenseField": "license",
+        "notes": "No API key required for basic keyword search. Returns GitHub repo URLs as source. Rate limit: 50 req/day anonymous, 10 req/min."
+      }
+    },
+    {
+      "id": "awesome-copilot",
+      "name": "Awesome GitHub Copilot",
+      "url": "https://awesome-copilot.github.com/skills/",
+      "description": "GitHub's official community collection of skills for Copilot, Claude Code, and other agents. Maintained by GitHub with community contributions. Machine-readable llms.txt available. Skills installable via `gh skills install github/awesome-copilot <skill-name>`. One of the largest curated sources (~600+ resources).",
+      "trustLevel": "official-community",
+      "license": "MIT",
+      "searchStrategy": {
+        "type": "github-raw",
+        "directUrl": "https://raw.githubusercontent.com/github/awesome-copilot/main/skills/{skillName}/SKILL.md",
+        "llmsIndex": "https://awesome-copilot.github.com/llms.txt",
+        "responseFormat": "markdown",
+        "notes": "Check if the skill exists by fetching the raw SKILL.md. If 200, parse frontmatter for metadata. The llms.txt index lists all skills in a machine-readable format."
+      }
+    },
+    {
+      "id": "obra-superpowers",
+      "name": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "description": "Jesse Vincent's canonical agentic skills framework. The authoritative source for brainstorming, writing-plans, executing-plans, systematic-debugging, test-driven-development, subagent-driven-development, code-review, using-git-worktrees, and verification-before-completion skills. Used by Claude Code, Codex, Copilot CLI, Cursor, Gemini CLI, and OpenCode. License: MIT.",
+      "trustLevel": "official-author",
+      "license": "MIT",
+      "author": "Jesse Vincent (obra)",
+      "knownSkills": [
+        "brainstorming",
+        "writing-plans",
+        "executing-plans",
+        "systematic-debugging",
+        "test-driven-development",
+        "subagent-driven-development",
+        "code-review",
+        "using-git-worktrees",
+        "verification-before-completion",
+        "using-superpowers"
+      ],
+      "searchStrategy": {
+        "type": "github-raw",
+        "directUrl": "https://raw.githubusercontent.com/obra/superpowers/main/skills/{skillName}/SKILL.md",
+        "apiUrl": "https://api.github.com/repos/obra/superpowers/contents/skills",
+        "responseFormat": "markdown",
+        "notes": "Check knownSkills list first before fetching. The skill name in the lock file may have a 'superpowers-' prefix that should be stripped before lookup (e.g. superpowers-writing-plans → writing-plans)."
+      }
+    },
+    {
+      "id": "anthropics-skills",
+      "name": "anthropics/skills",
+      "url": "https://github.com/anthropics/skills",
+      "description": "Anthropic's official skills repository. Powers Claude.ai's built-in file creation capabilities. Contains production-grade skills for docx, pptx, xlsx, pdf, frontend-design, algorithmic-art, and more. All skills are MIT licensed and maintained by Anthropic engineers.",
+      "trustLevel": "official-anthropic",
+      "license": "MIT",
+      "author": "Anthropic",
+      "knownSkills": [
+        "docx",
+        "pptx",
+        "xlsx",
+        "pdf",
+        "pdf-reading",
+        "frontend-design",
+        "file-reading",
+        "algorithmic-art",
+        "canvas-design",
+        "artifacts-builder"
+      ],
+      "searchStrategy": {
+        "type": "github-raw",
+        "directUrl": "https://raw.githubusercontent.com/anthropics/skills/main/{skillName}/SKILL.md",
+        "apiUrl": "https://api.github.com/repos/anthropics/skills/contents",
+        "responseFormat": "markdown",
+        "notes": "Check knownSkills list first. Skills are at the repo root level, not in a skills/ subdirectory."
+      }
+    },
+    {
+      "id": "skills-rest",
+      "name": "skills.rest",
+      "url": "https://skills.rest",
+      "description": "Large aggregator marketplace with 430,000+ vetted agent skills for OpenClaw, Claude, and Codex. Skills are accessible via direct URL pattern. The source type 'skills-rest' in skills-lock.json refers to this registry. Snyk-authored and mahipal-authored skills (snyk-fix, scanning-docker-images-with-trivy) are known to come from here.",
+      "trustLevel": "aggregator-vetted",
+      "license": "mixed",
+      "knownSkills": [
+        "snyk-fix",
+        "scanning-docker-images-with-trivy",
+        "rest-api-skill"
+      ],
+      "searchStrategy": {
+        "type": "structured-url",
+        "directUrl": "https://skills.rest/skill/{skillName}",
+        "responseFormat": "html",
+        "notes": "Direct URL lookup by skill name. Site returns 403 to automated requests in some configurations — treat failures gracefully. Known skills list above can be used as a fast local check before making a network request."
+      }
+    },
+    {
+      "id": "lobehub",
+      "name": "LobeHub Skills Marketplace",
+      "url": "https://lobehub.com/skills",
+      "description": "Skills marketplace with previews, install prompts, and metadata for skills across Claude Code, OpenClaw, and other agents. Good for discovering security and DevOps skills. Includes the Snyk obra/superpowers adapter (obra-using-superpowers) and Trivy container scanner skills.",
+      "trustLevel": "community-marketplace",
+      "license": "mixed",
+      "searchStrategy": {
+        "type": "manual-only",
+        "directUrl": "https://lobehub.com/skills/{skillId}",
+        "responseFormat": "html",
+        "notes": "skill IDs use author-repo-skillname format e.g. 'faulkdev-github-copilot-superpowers-obra-using-superpowers'. Better used for manual lookup than automated search — skill ID cannot be derived from skill name alone."
+      }
+    },
+    {
+      "id": "github-awesome-copilot-repo",
+      "name": "github/awesome-copilot (GitHub API)",
+      "url": "https://github.com/github/awesome-copilot",
+      "description": "The underlying GitHub repository for the Awesome Copilot collection. Can be queried via GitHub API to list all skill directory names. Useful as a fallback existence check — if a skill name matches a directory in this repo, the source is github/awesome-copilot with MIT license.",
+      "trustLevel": "official-community",
+      "license": "MIT",
+      "searchStrategy": {
+        "type": "github-api",
+        "apiUrl": "https://api.github.com/repos/github/awesome-copilot/contents/skills",
+        "directUrl": "https://raw.githubusercontent.com/github/awesome-copilot/main/skills/{skillName}/SKILL.md",
+        "responseFormat": "json",
+        "notes": "The API returns a directory listing. Extract 'name' fields to get all skill names. Then do a direct raw fetch if you need the SKILL.md content. No auth needed for public repo but GitHub rate-limits unauthenticated requests to 60/hour. Set GITHUB_TOKEN env var to raise to 5000/hour."
+      }
+    }
+  ]
+}
