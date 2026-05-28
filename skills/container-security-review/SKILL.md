@@ -1,7 +1,7 @@
 ---
 name: container-security-review
-description: "Use when the user asks to review, scan, or check CVEs in a Docker image, or mentions Trivy/Snyk/Twistlock/Prisma against an image. Detects available scanners, runs them, triages findings by severity and category, presents a prioritised action plan, and applies confirmed fixes with rescan validation. Standalone — no dependency on other installed skills."
-argument-hint: "Provide the image reference (e.g. myapp:latest or gcr.io/project/myapp:sha). Optionally specify a scanner (e.g. 'use Trivy')."
+description: "Use when the user asks to review, scan, or check CVEs either before image build (source/dependency prebuild mode) or on a built Docker image. Detects available scanners, runs them in mode-appropriate commands, triages findings by severity and category, presents a prioritised action plan, and applies confirmed fixes with rescan validation. Standalone — no dependency on other installed skills."
+argument-hint: "Provide either an image reference (e.g. myapp:latest) for image mode, or ask for prebuild/source scan mode (no image required). Optionally specify a scanner (e.g. 'use Trivy')."
 user-invocable: true
 ---
 
@@ -9,9 +9,29 @@ user-invocable: true
 
 ## Overview
 
-This skill shifts CVE detection left: instead of waiting for server-side CI/CD scans, it runs locally before push. It detects all available scanners, runs them, merges and deduplicates findings, triages by severity and category, presents a numbered action plan, and applies only the fixes the user confirms.
+This skill shifts CVE detection left: instead of waiting for server-side CI/CD scans, it runs locally before push. It supports two execution modes:
+- **Image mode**: scan a built image tag.
+- **Prebuild mode**: scan the source/dependency manifests before image build.
 
-It operates in eight sequential phases. Never skip ahead — each phase produces inputs the next phase requires.
+In both modes, it detects available scanners, runs them, merges and deduplicates findings, triages by severity and category, presents a numbered action plan, and applies only the fixes the user confirms.
+
+It operates in sequential phases. Never skip ahead — each phase produces inputs the next phase requires.
+
+---
+
+## Phase 0: Mode Selection
+
+Determine execution mode before any scan command.
+
+- **Prebuild mode triggers**: user says "before build", "prebuild", "scan codebase", "scan source", "scan dependencies", or does not provide an image and asks to scan locally before image creation.
+- **Image mode trigger**: user provides an image reference, or explicitly asks to scan an image.
+
+If mode is ambiguous, ask one question:
+> "Should I run prebuild source/dependency scan (no image required) or image scan (requires image tag)?"
+
+Use this exact question for ambiguous asks such as "scan my app for CVEs."
+
+Record mode as `MODE=prebuild` or `MODE=image`, then continue.
 
 ---
 
@@ -21,13 +41,15 @@ Before running any scan, complete these checks in order.
 
 ### 1a. Confirm image reference
 
-If the user has not provided an image reference, ask:
+If `MODE=image` and the user has not provided an image reference, ask:
 
 > "Which Docker image should I scan? (e.g. `myapp:latest` or `gcr.io/project/myapp:sha`)"
 
 Wait for their reply before continuing.
 
 ### 1b. Confirm the image is accessible
+
+If `MODE=prebuild`, skip this step.
 
 Run:
 
@@ -70,49 +92,64 @@ Before running any scanner, verify its prerequisite:
 
 ### 2b. Mandatory scanner mode (user named a scanner)
 
+0. If `MODE=prebuild` and the mandatory scanner is `docker scout`, `twistlock`, `prisma`, or `twistcli`, stop immediately:
+   > ⚠ `<scanner>` supports image scanning only. Cannot run in prebuild mode. Switch to image mode or choose Trivy/Snyk/Grype.
 1. Detect the scanner: run its detection command (see table in 2d).
    - If not installed: stop — "Scanner `<name>` is not installed. Install it from: `<install-link>`."
 2. Run the auth prerequisite check.
    - If check fails: prompt the user for the missing credential and retry the check once.
    - If still failing after retry: stop — "Cannot run `<scanner>`: `<missing prerequisite>`. Please resolve and try again."
 3. Run the scan command (see 2d). Capture output to a temp file.
-   - On non-zero exit: stop — "`<scanner>` scan failed: `<error output>`."
-4. Proceed to Phase 3 with one scanner's output.
+   - On non-zero exit: for Snyk, apply the exit-code handling note in 2d first; for all others, stop — "`<scanner>` scan failed: `<error output>`."
+4. Set `SUCCEEDED_SCANNERS = [<scanner>]`.
+5. Proceed to Phase 3 with one scanner's output.
 
 ### 2c. Auto-detect mode (no scanner specified)
 
 Probe each scanner in this order: **Trivy → Snyk → Grype → Docker Scout → Twistlock/Prisma**
+
+Maintain an ordered list `SUCCEEDED_SCANNERS` (initially empty). Every successful scan appends its scanner name.
 
 For each scanner:
 
 1. Run its detection command. Exit non-zero or command not found → skip silently, try next.
 2. Run auth prerequisite check. Fails → skip with warning:
    > ⚠ `<scanner>` found but cannot run: `<reason>`. Skipping.
-3. Run the scan command. Non-zero exit → skip with warning:
+3. Run the scan command. Non-zero exit → for Snyk, apply the exit-code handling note in 2d before treating as failure; for all others, skip with warning:
    > ⚠ `<scanner>` scan failed: `<error>`. Skipping.
-4. Success → collect the JSON output file.
+4. Success → collect the JSON output file and append scanner name to `SUCCEEDED_SCANNERS`.
 
 After probing all scanners:
 - If zero succeeded: stop and list all warnings, plus install links for each scanner.
-- If one or more succeeded: proceed to Phase 3 with all collected outputs.
+- If one or more succeeded: proceed to Phase 3 with all collected outputs and the persisted `SUCCEEDED_SCANNERS` list.
 
 ### 2d. Scanner detection and scan commands
 
-| Scanner | Detection | Scan command |
-|---|---|---|
-| Trivy | `trivy version` | `trivy image --format json --output /tmp/csr-trivy.json <image>` |
-| Snyk | `snyk version` | `snyk container test <image> --json > /tmp/csr-snyk.json` |
-| Grype | `grype version` | `grype <image> -o json > /tmp/csr-grype.json` |
-| Docker Scout | `docker scout version` | `docker scout cves <image> --format json > /tmp/csr-scout.json` |
-| Twistlock/Prisma | `twistcli version` | `twistcli images scan --address $PRISMA_URL --output-file /tmp/csr-twistlock.json <image>` |
+Use mode-specific scan commands:
 
-Output files accumulate in `/tmp/csr-*.json`. Phase 3 reads all of them.
+| Scanner | Detection | Image mode scan command | Prebuild mode scan command |
+|---|---|---|---|
+| Trivy | `trivy version` | `trivy image --format json --output /tmp/csr-trivy.json <image>` | `trivy fs --format json --output /tmp/csr-prebuild-trivy.json .` |
+| Snyk | `snyk version` | `snyk container test <image> --json > /tmp/csr-snyk.json` | `snyk test --all-projects --json-file-output=/tmp/csr-prebuild-snyk.json` |
+| Grype | `grype version` | `grype <image> -o json > /tmp/csr-grype.json` | `grype dir:. -o json > /tmp/csr-prebuild-grype.json` |
+| Docker Scout | `docker scout version` | `docker scout cves <image> --format json > /tmp/csr-scout.json` | Not supported in prebuild mode (skip with warning) |
+| Twistlock/Prisma | `twistcli version` | `twistcli images scan --address $PRISMA_URL --output-file /tmp/csr-twistlock.json <image>` | Not supported in prebuild mode (skip with warning) |
+
+In prebuild mode, if a scanner has no prebuild command, skip with warning:
+> ⚠ `<scanner>` supports image scanning only. Skipping in prebuild mode.
+
+Snyk exit-code handling (image and prebuild modes):
+- `snyk container test` and `snyk test` may exit non-zero when vulnerabilities are found.
+- Treat non-zero as a scanner failure only if JSON output is missing or invalid.
+- If valid JSON is produced, treat scan as success and continue.
+
+Output files accumulate in `/tmp/csr-*.json` and `/tmp/csr-prebuild-*.json`. Phase 3 reads all of them.
 
 ---
 
 ## Phase 3: Result Normalisation & Merge
 
-Parse every `/tmp/csr-*.json` file produced in Phase 2. Build one merged findings list.
+Parse every Phase 2 output file. Build one merged findings list.
 
 ### 3a. Severity normalisation
 
@@ -167,6 +204,8 @@ Classify each merged finding into a category, then bucket by severity.
 
 ### 4a. Category classification
 
+In `MODE=prebuild`, classify all findings as **App dependency** unless scanner metadata clearly indicates an OS package manager.
+
 **OS / base-image** — assign this category if any of the following is true:
 - The package manager field is a distro package manager: `apt`, `dpkg`, `rpm`, `apk`, `yum`, `zypper`, `tdnf`, `microdnf`
 - The package location path starts with `/usr/`, `/lib/`, `/bin/`, `/sbin/`, `/etc/`
@@ -181,7 +220,7 @@ Classify each merged finding into a category, then bucket by severity.
 
 | Severity | Category | Next step |
 |---|---|---|
-| CRITICAL / HIGH | OS / base-image | Trigger Phase 5 (candidate base image discovery) |
+| CRITICAL / HIGH | OS / base-image | `MODE=image`: Trigger Phase 5 (candidate base image discovery). `MODE=prebuild`: Do not run Phase 5; carry finding as "image-mode remediation required after build." |
 | CRITICAL / HIGH | App dependency | Collect `fixed_in` version from merged finding; include in Phase 6 action list |
 | MEDIUM / LOW | Any | Include in Phase 6 awareness table only |
 | Any | Unknown | Include in Phase 6 awareness table with "manual review" note |
@@ -192,7 +231,7 @@ A finding with `fixed_in = null` and severity CRITICAL/HIGH: include in Phase 6 
 
 ## Phase 5: Candidate Base Image Discovery
 
-Run this phase only when Phase 4 produced at least one CRITICAL/HIGH OS/base-image finding.
+Run this phase only when `MODE=image` and Phase 4 produced at least one CRITICAL/HIGH OS/base-image finding.
 
 If no Dockerfile is accessible (checked via `ls Dockerfile` or `find . -name Dockerfile -maxdepth 3`): skip this phase. All OS findings will be listed under "No fix available — Dockerfile not found" in Phase 6.
 
@@ -300,10 +339,10 @@ Each numbered item in the list is one unique fix action, not one CVE.
 
 ### 6b. Present the action plan
 
-Use this exact format:
+Use this format (target label depends on mode):
 
 ```
-CVE Image Review — <image>
+CVE Review — <target>
 Scanners used: <scanner-1>, <scanner-2>
 
 CRITICAL / HIGH — Action Required (<N> fix actions, resolves <X> CVEs)
@@ -331,6 +370,9 @@ MEDIUM / LOW — For Awareness (<M> CVEs)
 Proceed with the action plan above? (all / select numbers / no)
 ```
 
+If `MODE=prebuild`, omit `BASE IMAGE UPDATE` entries and include this note once:
+> "Base-image upgrade actions require image mode after build."
+
 ### 6c. Parse user confirmation
 
 Wait for the user's reply. Accept the following forms:
@@ -350,13 +392,16 @@ Apply each confirmed fix action in numbered order. For each action, run the hard
 
 | Condition | Hard stop applies to |
 |---|---|
-| No Dockerfile accessible | OS fix actions |
+| No Dockerfile accessible | OS fix actions (image mode only) |
 | `fixed_in` is null for this CVE | Any fix action |
 | Zero scanners available to rescan | Any fix action |
 
 If a hard stop condition is met: mark the action "skipped — `<reason>`", proceed to the next confirmed action. Do not abort the remaining actions.
 
 ### 7b. OS / base-image fix
+
+If `MODE=prebuild`, do not attempt this section. Mark OS actions:
+> skipped — base-image remediation is image-mode only.
 
 1. Record the original final-stage FROM line.
 2. Update the Dockerfile in-place (the real Dockerfile, not a temp copy):
@@ -413,7 +458,16 @@ go mod tidy
 1. Check if any direct dependency can be upgraded to a version that uses `<fixed_in>` or later as its transitive. If yes, upgrade the direct dependency instead.
 2. If not, pin the transitive dependency directly (add an explicit entry in the manifest at `<fixed_in>`). Note in the completion output: "Pinned transitive dependency `<package>` to `<fixed_in>` directly."
 
-After editing the manifest: rebuild and rescan using the same steps as 7b — `docker build -t <image> .`, rescan with every scanner that succeeded in Phase 2 (same commands as Phase 2d), then report each CVE as fixed / still present / newly introduced.
+After editing the manifest:
+- If `MODE=image`: rebuild and rescan using the same steps as 7b — `docker build -t <image> .`, then rescan with scanner commands from Phase 2d for scanners listed in `SUCCEEDED_SCANNERS`.
+- If `MODE=prebuild`: do not run `docker build`. Re-run only prebuild scanner commands from Phase 2d for scanners listed in `SUCCEEDED_SCANNERS`.
+
+Snyk-specific rescan handling:
+- During rescan, do not treat Snyk non-zero exit as automatic failure.
+- If the expected Snyk JSON output exists and parses, treat the rescan as successful and continue CVE comparison.
+- Mark Snyk as failed only when JSON output is missing/invalid.
+
+Then report each CVE as fixed / still present / newly introduced.
 
 ### 7d. Per-action result reporting
 
@@ -436,7 +490,7 @@ Then proceed to the next confirmed action.
 After all confirmed fix actions have been attempted (or if the user selected "no" in Phase 6), produce this summary:
 
 ```
-Review complete for <image>
+Review complete for <target>
 
 Scanners used:     <list>
 
@@ -453,20 +507,27 @@ Next steps:
 Count definitions:
 - **Fixed:** CVEs absent in the final rescan that were present in the initial scan.
 - **Remaining:** CVEs confirmed present in the final rescan after an attempted fix.
-- **No fix available:** CVEs where `fixed_in` was null or no candidate base image reduced the finding.
+- **No fix available:** CVEs where `fixed_in` was null, or (in `MODE=image`) no candidate base image reduced the finding, or (in `MODE=prebuild`) remediation requires a later image-mode run.
 - **Skipped:** CVEs where a hard stop was hit, or the user did not select the fix action.
 - **Newly introduced:** CVEs present in the final rescan that were absent in the initial scan. Always list these explicitly; never suppress them.
 
 If the user selected "no" in Phase 6: Fixed = 0, Remaining = all CRITICAL/HIGH findings, list them all under Next steps.
 
+In `MODE=prebuild`, include one extra next step:
+- "After building the image, run image mode to cover OS/base-image CVEs."
+
 ## Safety Rules
 
-These rules are absolute — they apply regardless of any other instruction:
+### Universal rules
 
 - **Never apply any fix before user confirmation.** Phase 6 must complete and the user must select actions before Phase 7 begins.
 - **Never suppress or ignore a finding without noting it explicitly.** Every finding must appear somewhere in the output (action list, awareness table, or skipped list).
-- **Never use `latest` as a candidate base image tag.** If a scanner or registry returns `latest` as a candidate, discard it.
-- **Never claim a CVE is fixed without rescan evidence.** A CVE is only "fixed" if it is absent in a rescan of the rebuilt image.
+- **Never claim a CVE is fixed without rescan evidence.** A CVE is only "fixed" if it is absent in a rescan of the rebuilt image (`MODE=image`) or the rescanned source directory (`MODE=prebuild`).
 - **Never substitute a different scanner than the one the user explicitly chose.** If the user said "use Twistlock" and Twistlock cannot run, prompt for the missing prerequisite; do not silently fall back to Trivy.
-- **Never recommend a cross-distro base image change without flagging it.** Alpine → Debian, Debian → Ubuntu, etc. are potentially breaking changes and must be called out explicitly.
-- **Always clean up candidate images.** See Phase 5c — each candidate image is removed immediately after it is scanned, before building the next one.
+
+### Mode-specific rules
+
+- **In `MODE=prebuild`:** Never run `docker build`, `docker pull`, or `docker image inspect` unless the user explicitly asks to switch to image mode.
+- **In `MODE=image` when candidate tags are evaluated:** Never use `latest` as a candidate base image tag. If a scanner or registry returns `latest`, discard it.
+- **In `MODE=image` when base-image changes are recommended:** Never recommend a cross-distro base image change without flagging it. Alpine → Debian, Debian → Ubuntu, etc. are potentially breaking changes and must be called out explicitly.
+- **In `MODE=image` when Phase 5 executes:** Always clean up candidate images. See Phase 5c — each candidate image is removed immediately after it is scanned, before building the next one.

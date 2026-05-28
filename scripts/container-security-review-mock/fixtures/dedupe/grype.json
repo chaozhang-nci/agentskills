@@ -1,0 +1,15 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2025-0101",
+        "severity": "High"
+      },
+      "artifact": {
+        "name": "libxml2",
+        "version": "2.9.14",
+        "type": "deb"
+      }
+    }
+  ]
+}

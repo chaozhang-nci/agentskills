@@ -1,0 +1,26 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2024-1111",
+        "severity": "High"
+      },
+      "artifact": {
+        "name": "openssl",
+        "version": "3.0.2",
+        "type": "deb"
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "CVE-2024-7777",
+        "severity": "Low"
+      },
+      "artifact": {
+        "name": "libexpat1",
+        "version": "2.5.0",
+        "type": "deb"
+      }
+    }
+  ]
+}

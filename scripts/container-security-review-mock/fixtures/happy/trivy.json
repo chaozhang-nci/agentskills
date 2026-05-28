@@ -1,0 +1,26 @@
+{
+  "ArtifactName": "python:3.11-slim",
+  "Results": [
+    {
+      "Target": "python:3.11-slim (debian 12)",
+      "Class": "os-pkgs",
+      "Type": "debian",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2024-1111",
+          "PkgName": "openssl",
+          "InstalledVersion": "3.0.2",
+          "FixedVersion": "3.0.7",
+          "Severity": "HIGH"
+        },
+        {
+          "VulnerabilityID": "CVE-2024-5555",
+          "PkgName": "zlib1g",
+          "InstalledVersion": "1.2.13",
+          "FixedVersion": "1.2.13+dfsg-2",
+          "Severity": "MEDIUM"
+        }
+      ]
+    }
+  ]
+}

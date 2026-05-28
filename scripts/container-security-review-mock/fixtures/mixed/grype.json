@@ -1,0 +1,15 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2025-8082",
+        "severity": "Negligible"
+      },
+      "artifact": {
+        "name": "libgcc-s1",
+        "version": "12.2.0",
+        "type": "deb"
+      }
+    }
+  ]
+}

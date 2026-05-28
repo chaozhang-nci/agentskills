@@ -1,0 +1,13 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "SNYK-DEBIAN12-GLIBC-4040",
+      "identifiers": { "CVE": ["CVE-2025-4040"] },
+      "packageName": "glibc",
+      "version": "2.36",
+      "severity": "critical",
+      "fixedIn": [],
+      "from": ["python:3.11-slim", "glibc@2.36"]
+    }
+  ]
+}

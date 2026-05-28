@@ -1,0 +1,13 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "SNYK-PYTHON-REQUESTS-8081",
+      "identifiers": { "CVE": ["CVE-2025-8081"] },
+      "packageName": "requests",
+      "version": "2.28.1",
+      "severity": "medium",
+      "fixedIn": ["2.31.0"],
+      "from": ["python:3.11-slim", "pip", "requests@2.28.1"]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "$0")" && pwd)/_common.sh"
+
+if [[ "${1:-}" == "version" ]]; then
+  echo "Version: 0.57.1"
+  exit 0
+fi
+
+if [[ "${1:-}" == "image" ]]; then
+  out=""
+  shift
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --output)
+        out="${2:-}"
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  src="$(fixture_file trivy)"
+  if [[ -n "${out}" ]]; then
+    cp "${src}" "${out}"
+  else
+    cat "${src}"
+  fi
+  exit 0
+fi
+
+echo "mock trivy: unsupported args: $*" >&2
+exit 1

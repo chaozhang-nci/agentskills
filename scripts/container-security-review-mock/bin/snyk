@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "$0")" && pwd)/_common.sh"
+
+if [[ "${1:-}" == "version" ]]; then
+  echo "1.1299.0"
+  exit 0
+fi
+
+if [[ "${1:-}" == "container" && "${2:-}" == "test" ]]; then
+  cat "$(fixture_file snyk)"
+  exit 0
+fi
+
+echo "mock snyk: unsupported args: $*" >&2
+exit 1

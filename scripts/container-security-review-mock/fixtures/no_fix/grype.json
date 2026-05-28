@@ -1,0 +1,15 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2025-4040",
+        "severity": "Critical"
+      },
+      "artifact": {
+        "name": "glibc",
+        "version": "2.36",
+        "type": "deb"
+      }
+    }
+  ]
+}

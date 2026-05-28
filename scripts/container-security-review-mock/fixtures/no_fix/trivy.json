@@ -1,0 +1,19 @@
+{
+  "ArtifactName": "python:3.11-slim",
+  "Results": [
+    {
+      "Target": "python:3.11-slim (debian 12)",
+      "Class": "os-pkgs",
+      "Type": "debian",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2025-4040",
+          "PkgName": "glibc",
+          "InstalledVersion": "2.36",
+          "FixedVersion": "",
+          "Severity": "CRITICAL"
+        }
+      ]
+    }
+  ]
+}

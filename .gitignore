@@ -16,3 +16,6 @@
 __pycache__/
 *.pyc
 .agents/
+
+# Generated mock test reports
+scripts/container-security-review-mock/reports/
