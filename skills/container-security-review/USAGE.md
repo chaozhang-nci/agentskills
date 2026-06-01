@@ -16,7 +16,9 @@ Run them in sequence for full coverage: prebuild first, fix what you can, build,
 ## Prerequisites
 
 **Both modes:**
-- At least one scanner installed: [Trivy](https://aquasecurity.github.io/trivy/), [Grype](https://github.com/anchore/grype), or [Snyk](https://docs.snyk.io/snyk-cli/install-or-update-the-snyk-cli)
+- At least one scanner installed (mode-specific support):
+  - **Prebuild + Image:** [Trivy](https://aquasecurity.github.io/trivy/), [Grype](https://github.com/anchore/grype), or [Snyk](https://docs.snyk.io/snyk-cli/install-or-update-the-snyk-cli)
+  - **Image only:** Docker Scout (`docker scout`) or Twistlock/Prisma (`twistcli`)
 - Claude Code open in your project workspace with the `container-security-review` skill installed
 - For Snyk: `SNYK_TOKEN` set in your shell
 
@@ -45,12 +47,12 @@ prebuild scan
 scan dependencies before build
 ```
 
-**Step 2.** The skill runs `trivy fs`, `grype dir:.`, and/or `snyk test` against your project directory, merges results, and presents a numbered action plan of app dependency CVEs:
+**Step 2.** The skill runs `trivy fs`, `grype dir:.`, and/or `snyk test` against your project directory, merges results, and presents a numbered action plan focused on app dependency fixes:
 
 - **CRITICAL / HIGH** — numbered fix actions (manifest edits)
 - **MEDIUM / LOW** — awareness table
 
-> Note: OS/base-image CVEs are not reported in prebuild mode — those require an image scan after build.
+> Note: prebuild mode does not perform base-image remediation. If OS/base-image findings are surfaced, they are carried with an "image-mode remediation required after build" note.
 
 **Step 3.** Answer `no` at the prompt if you only want the report:
 
