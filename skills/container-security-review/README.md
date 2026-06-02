@@ -9,6 +9,29 @@ See [USAGE.md](./USAGE.md) for invocation examples and workflow.
 
 ---
 
+## Installation
+
+Install via the skills CLI from any project where Claude Code is active:
+
+```bash
+npx skills add chaozhang-nci/agentskills@container-security-review
+```
+
+To skip the confirmation prompt:
+
+```bash
+npx skills add chaozhang-nci/agentskills@container-security-review -y
+```
+
+After installing, check for updates at any time:
+
+```bash
+npx skills check
+npx skills update
+```
+
+---
+
 ## Skill Structure
 
 `SKILL.md` is the entry point. Detailed rules live in `references/` and are loaded on demand via the Read tool.

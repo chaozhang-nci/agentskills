@@ -1,5 +1,8 @@
 ---
 name: container-security-review
+version: 1.0.0
+author: Chao Zhang
+license: MIT
 description: "Use when the user asks to review, scan, or check CVEs either before image build (source/dependency prebuild mode) or on a built Docker image. Detects available scanners, runs them in mode-appropriate commands, triages findings by severity and category, presents a prioritised action plan, and applies confirmed fixes with rescan validation. Standalone — no dependency on other installed skills."
 argument-hint: "Provide either an image reference (e.g. myapp:latest) for image mode, or ask for prebuild/source scan mode (no image required). Optionally specify a scanner (e.g. 'use Trivy')."
 user-invocable: true
