@@ -147,6 +147,34 @@ The last next-step line appears in prebuild mode to remind you to follow up with
 
 ---
 
+## Partial environments
+
+Not all workflows have source code, a Dockerfile, and a built image all at once. Here is what the skill can and cannot fix in each partial scenario.
+
+### Image only (no Dockerfile, no source code)
+
+The skill runs a full scan and produces a complete findings report and action plan. No fixes are applied.
+
+| CVE type | What happens |
+|---|---|
+| OS / base-image | Listed as **No fix available — Dockerfile not found** in the action plan. Phase 5 (base image discovery) is skipped entirely. |
+| App dependency | Fix commands would need to edit manifest files that don't exist locally. The skill attempts the fix, fails, and reports `failed — manifest file not found`. |
+
+**Use the action plan output as a remediation ticket** for whoever owns the source repo. It includes the exact package, current version, fixed version, and ecosystem fix command for every finding.
+
+### Dockerfile present, no source code
+
+OS/base-image CVEs are fully remediable. App dependency CVEs are not.
+
+| CVE type | What happens |
+|---|---|
+| OS / base-image | Phase 5 runs: reads the `FROM` line, builds and scans candidate base images, recommends the best tag. Phase 7b updates the `FROM` line, rebuilds, and rescans to confirm. **Fully automated.** |
+| App dependency | Manifest files (`requirements.txt`, `package.json`, etc.) are baked into the image layers and not present on disk. Fix commands fail with a build or file-not-found error and are reported as `failed`. |
+
+**Net result:** OS surface is cleaned up; app dependency CVEs remain and are documented in Phase 8 under `Remaining` with the exact fix commands to apply once source is available.
+
+---
+
 ## Recommended workflow
 
 ```
